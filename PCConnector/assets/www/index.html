@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Phone Gap Test</title>
+    <link type="text/css" rel="stylesheet" href="css/jquery.mobile-1.0.1.min.css"/>
+    <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/ConnectorClientPlugin.js"></script>
+
+    <script type="text/javascript">
+
+        $('#homePage').live('pageinit', function () {
+            $('#btnConnect').click(function () {
+                var serverIp = $('#txtServerIP').val().trim();
+                var port = $('#txtServerPort').val().trim();
+
+                window.plugins.ConnectorClientPlugin.connect(serverIp, port,
+                        function (result) {
+                            if (result == 'Success')
+                                $.mobile.changePage('#messagePage');
+                            else
+                                alert(result);
+                        }, function (errResult) {
+                            alert(errResult);
+                        });
+                return false;
+            });
+        });
+
+        $('#messagePage').live('pageinit', function () {
+
+            $('#txtMessage').bind('keydown',
+                    function (event) {
+                        event.
+                        window.plugins.ConnectorClientPlugin.send(event.which,
+                                function (result) {
+                                },
+                                function (errResult) {
+                                    alert(errResult);
+                                });
+                    }).textinput('enable');
+
+            $('#btnClose').click(
+                    function () {
+                        window.plugins.ConnectorClientPlugin.close(function (result) {
+                            if (result == "Success") history.back();
+                        }, function (errResult) {
+                            alert(errResult);
+                        });
+                        return false;
+                    }).button('enable');
+        });
+
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        function onDeviceReady() {
+            $('#connectionInfo').html(getConnection());
+        }
+
+        function getConnection() {
+            var networkState = navigator.network.connection.type;
+
+            var states = {};
+            states[Connection.UNKNOWN] = 'Unknown connection';
+            states[Connection.ETHERNET] = 'Ethernet connection';
+            states[Connection.WIFI] = 'WiFi connection';
+            states[Connection.CELL_2G] = 'Cell 2G connection';
+            states[Connection.CELL_3G] = 'Cell 3G connection';
+            states[Connection.CELL_4G] = 'Cell 4G connection';
+            states[Connection.NONE] = 'No network connection';
+
+            return 'Connection type: ' + states[networkState];
+        }
+    </script>
+
+</head>
+<body>
+<div id="homePage" data-role="page" class="type-home" data-theme="b">
+    <div data-role="header" data-theme="b">
+        <h1>PC Connector</h1>
+    </div>
+    <div data-role="content">
+        <div id="connectionInfo"></div>
+        <div data-role="fieldcontain">
+            <label for="txtServerIP" class="ui-hidden-accessible">Server IP</label>
+            <input id="txtServerIP" type="text" placeholder="Server IP" value="192.168.1.225"/>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="txtServerPort" class="ui-hidden-accessible">Port</label>
+            <input id="txtServerPort" type="text" placeholder="Port" value="10086"/>
+        </div>
+
+        <button id="btnConnect">Connect</button>
+    </div>
+
+    <div data-role="footer" data-theme="b">
+        <p style="text-align: center;">&copy; 2011-2012 PC Connector</p>
+    </div>
+</div>
+<div id="messagePage" data-role="page" data-theme="b" data-transition="flip">
+    <div data-role="content">
+        <div data-role="fieldcontain">
+            <label for="txtMessage" class="ui-hidden-accessible">Message send to server</label>
+            <textarea id="txtMessage" placeholder="Message send to server" disabled></textarea>
+        </div>
+        <button id="btnClose" disabled>Close Connect</button>
+    </div>
+    <div data-role="footer" data-theme="b">
+        <p>&copy; 2011-2012 PC Connector</p>
+    </div>
+</div>
+</body>
+</html>
