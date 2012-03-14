@@ -32,10 +32,9 @@
 
         $('#messagePage').live('pageinit', function () {
 
-            $('#txtMessage').bind('keydown',
+            $('#txtMessage').bind('input',
                     function (event) {
-                        event.
-                        window.plugins.ConnectorClientPlugin.send(event.which,
+                        window.plugins.ConnectorClientPlugin.send(this.value,
                                 function (result) {
                                 },
                                 function (errResult) {
@@ -100,7 +99,7 @@
         <p style="text-align: center;">&copy; 2011-2012 PC Connector</p>
     </div>
 </div>
-<div id="messagePage" data-role="page" data-theme="b" data-transition="flip">
+<div id="messagePage" data-role="page" data-theme="b" data-transition="slidedown">
     <div data-role="content">
         <div data-role="fieldcontain">
             <label for="txtMessage" class="ui-hidden-accessible">Message send to server</label>
